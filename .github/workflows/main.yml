@@ -5,7 +5,7 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
-  workflow_dispatch: # يتيح لك تشغيل البناء يدوياً
+  workflow_dispatch:
 
 jobs:
   build-windows:
@@ -13,7 +13,7 @@ jobs:
     runs-on: windows-latest
 
     env:
-      RUST_BACKTRACE: 1 # لكشف تفاصيل الأخطاء في حال فشل بناء Rust
+      RUST_BACKTRACE: 1
 
     steps:
       - name: Checkout Code
@@ -23,12 +23,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          # تم حذف cache: 'npm' لتجنب مشكلة ملف القفل
 
       - name: Setup Rust Toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: x86_64-pc-windows-msvc # تحديد بيئة بناء ويندوز
+          targets: x86_64-pc-windows-msvc
           components: clippy, rustfmt
 
       - name: Cache Rust Dependencies
@@ -36,8 +35,7 @@ jobs:
         with:
           workspaces: src-tauri -> target
 
-      - name: Install NPM Dependencies
-        run: npm install
+      # تم حذف خطوة `npm install` لتجنب خطأ الملف المفقود.
 
       - name: Check Rust Code Formatting
         run: cargo fmt --manifest-path src-tauri/Cargo.toml --all -- --check
